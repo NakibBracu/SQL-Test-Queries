@@ -12,3 +12,17 @@ FROM (
     FROM CTE
 ) AS Ranked
 WHERE RowNum = 1;
+
+-- Now find out by match type highest scorer
+with CTE2
+as(
+select 
+Match_Type,max(Run) as MaximumRun from CricketScores group by Match_Type)
+SELECT 
+    c.Match_Type,
+    c.MaximumRun,
+    cs.PlayerName
+FROM 
+    CTE2 c
+JOIN 
+    CricketScores cs ON c.Match_Type = cs.Match_Type AND c.MaximumRun = cs.Run;
