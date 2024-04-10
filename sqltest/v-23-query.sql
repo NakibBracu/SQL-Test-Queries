@@ -14,4 +14,4 @@ select Team2 as Team,case when Team2=Winner then 1 else 0 end Win_flag from ICC_
 )
 select Team,COUNT(Win_flag) as Played_Matches,Sum(Win_flag) as Winned_matches,
 (COUNT(Win_flag)-Sum(Win_flag)) as Lose_Matches
-from cte group by Team
+from cte group by Team order by Winned_matches desc
