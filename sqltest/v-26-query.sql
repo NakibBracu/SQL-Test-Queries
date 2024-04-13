@@ -15,4 +15,4 @@ SELECT
         ORDER BY Transaction_date
     ) AS Running_total
 FROM
-    CTE;
+    CTE order by Transaction_date;
