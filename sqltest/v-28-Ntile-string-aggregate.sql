@@ -2,7 +2,7 @@
     category,
     item,
     CONCAT(Category, ' - ', Item) AS Category_Item,
-    NTILE((SELECT COUNT(DISTINCT category) FROM purchase)) 
+    NTILE((SELECT COUNT(DISTINCT category) FROM purchase)) -- number
 	OVER (ORDER BY category) AS number
 FROM 
     purchase)
