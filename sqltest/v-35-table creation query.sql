@@ -22,8 +22,8 @@ Price int
 
 -- Insert data into the table
 INSERT INTO menu (Product_Id, Product_Name, Price) VALUES
-(1, 'Sushi', 100),
-(2, 'Pizza', 150),
+(1, 'Pizza', 100),
+(2, 'Sushi', 150),
 (3, 'Salad', 80),
 (4, 'Sandwich', 90),
 (5, 'Pasta', 120),
