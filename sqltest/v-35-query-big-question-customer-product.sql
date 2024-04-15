@@ -19,7 +19,8 @@ select * from sales
 select * from menu
 select * from members
 
-select s.Customer_ID,m.Product_Name,m.Price,mem.joining_date,s.Order_Date,
+select customer_id,sum(earning_points) as total_earning_points from 
+(select s.Customer_ID,m.Product_Name,m.Price,mem.joining_date,s.Order_Date,
 DATEADD(DAY,6,mem.joining_date) as after_join_week_date,
 EOMONTH('2021-01-01') as last_date,
 case 
@@ -39,4 +40,5 @@ Order_Date <= EOMONTH('2021-01-01')  then
 Price*10
 end as Earning_points
 from sales s inner join menu m on s.Product_ID = m.Product_Id
-inner join Members mem on s.Customer_ID  = mem.Customer_ID
+inner join Members mem on s.Customer_ID  = mem.Customer_ID) temp
+group by Customer_ID
