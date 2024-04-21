@@ -25,7 +25,9 @@ Comission int null
 -- IDENTITY property.
 -- Alter Table Employee
 -- Alter column EmployeeId int identity primary key  
-
+-- Delete table specific data
+select * from Employee
+delete from Employee where Salary = 64000
 
 
 
@@ -90,6 +92,16 @@ where Comission > 1000 and Comission < 2000
 alter Table Employee
 add MaritalStatus varchar(15)
 
+--rename column
+-- EXEC sp_rename 'employee.employeeId2', 'employeeId', 'COLUMN';
+--rename table
+/*
+EXEC sp_rename 'Test', 'Test2';
+create table Test(
+Name nvarchar(20)
+)
+select * from Test2
+*/
 -- Now set marital Status
 update Employee
 set maritalStatus = 'Married'

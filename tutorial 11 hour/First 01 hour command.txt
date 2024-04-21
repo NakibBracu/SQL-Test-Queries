@@ -1,0 +1,11 @@
+Create Database
+Use database
+Basic Insert, Update , Delete with conditions
+Create table,
+Select specific column,
+Where clause,
+Identity Property,
+Drop table, database
+Rename Table,cloumn
+Select Clause with case
+in operator
