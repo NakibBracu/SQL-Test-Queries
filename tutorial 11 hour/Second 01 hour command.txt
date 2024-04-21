@@ -1,0 +1,12 @@
+top,
+update,
+coalesce,-> change in exchange of null
+isnull,
+like,
+substring,
+object_id,
+temporary table, --> #tablename
+union,
+translate, -> change string
+replicate, -> repeat
+cast -> nvarchar to int

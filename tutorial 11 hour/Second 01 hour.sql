@@ -32,3 +32,55 @@ select * from Employee where EmployeeName like '____a'
 select * from Employee where EmployeeName like '%i%'
 -- Find the Employees whose name contains character 'c' and 'h' together
 select * from Employee where EmployeeName like '%ch%'
+-- Find The employees where departmentId is 1 and they should be in descending order
+select * from Employee Where DepartmentId  = 1 order by Salary desc
+-- Find The employees where departmentId is 1 and they should be in descending order
+-- But firstly They want to show Female salary, Then Male Salary
+select * from Employee Where DepartmentId  = 1 order by Gender,Salary desc
+-- Write the EmployeeName with First two characters
+select EmployeeName, Substring(EmployeeName,1,2) as First_two_characters 
+from Employee
+-- Now sort the EmployeeName with Last Two characters in ascending order
+-- as we have to include the 2nd last character so we subtract 1
+select EmployeeName, Substring(EmployeeName,len(EmployeeName)-1,2) as 
+last_two_characters from Employee order by EmployeeName asc
+-- Find the ObjectId of Employee Table
+Select OBJECT_ID('Employee') As EmployeeTableIDInEMSDatabase
+-- Now create a temporary table Name EmployeeTemp 
+if OBJECT_ID('tempdb..#EmployeeTemp') is not null drop table #EmployeeTemp
+create table #EmployeeTemp(
+Name nvarchar(50)
+)
+-- Now insert 4 entry in the #EmployeeTemp table with select and union
+-- But Let's say insert the rows with their salary in the same column
+insert into #EmployeeTemp(Name)
+select 'Abrar10000'
+union
+select 'Sachin25000'
+union 
+select 'Rayda4500'
+union
+select 'Nabil3300'
+-- Extract Only Numbers from Nabil12345
+SELECT Replace(TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstwxyz', 
+REPLICATE('#', len('abcdefghijklmnopqrstwxyz'))),'#','') as Onlysalary
+-- Now use CTE for that
+WITH TranslatedString AS (
+    SELECT TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstwxyz', 
+	REPLICATE('#', LEN('abcdefghijklmnopqrstwxyz'))) AS TranslatedValue
+)
+SELECT REPLACE(TranslatedValue, '#', '') AS OnlySalary
+FROM TranslatedString;
+-- select all rows
+select * from #EmployeeTemp
+--Abrar10000
+--Nabil3300
+--Rayda4500
+--Sachin25000
+-- Now Let's consider this as wrong entry and want to sort them as their salary 
+-- in descending order
+-- if we don't cast the Extracted salary then SQL Server consider the
+-- field as nvarchar. So make sure to cast
+select *, cast(Replace(TRANSLATE(Name, 'abcdefghijklmnopqrstwxyz', 
+REPLICATE('#', len('abcdefghijklmnopqrstwxyz'))),'#','') as int) as Onlysalary
+from #EmployeeTemp order by Onlysalary desc
