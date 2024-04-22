@@ -62,12 +62,12 @@ select 'Rayda4500'
 union
 select 'Nabil3300'
 -- Extract Only Numbers from Nabil12345
-SELECT Replace(TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstwxyz', 
-REPLICATE('#', len('abcdefghijklmnopqrstwxyz'))),'#','') as Onlysalary
+SELECT Replace(TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstuvwxyz', 
+REPLICATE('#', 26)),'#','') as Onlysalary
 -- Now use CTE for that
 WITH TranslatedString AS (
-    SELECT TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstwxyz', 
-	REPLICATE('#', LEN('abcdefghijklmnopqrstwxyz'))) AS TranslatedValue
+    SELECT TRANSLATE('Nabil12345', 'abcdefghijklmnopqrstuvwxyz', 
+	REPLICATE('#', 26)) AS TranslatedValue
 )
 SELECT REPLACE(TranslatedValue, '#', '') AS OnlySalary
 FROM TranslatedString;
@@ -81,6 +81,6 @@ select * from #EmployeeTemp
 -- in descending order
 -- if we don't cast the Extracted salary then SQL Server consider the
 -- field as nvarchar. So make sure to cast
-select *, cast(Replace(TRANSLATE(Name, 'abcdefghijklmnopqrstwxyz', 
-REPLICATE('#', len('abcdefghijklmnopqrstwxyz'))),'#','') as int) as Onlysalary
+select *, cast(Replace(TRANSLATE(Name, 'abcdefghijklmnopqrstuvwxyz', 
+REPLICATE('#', 26)),'#','') as int) as Onlysalary
 from #EmployeeTemp order by Onlysalary desc
