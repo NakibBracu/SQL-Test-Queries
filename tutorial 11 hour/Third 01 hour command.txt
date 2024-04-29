@@ -1,0 +1,8 @@
+coalesce
+create
+union
+isnull
+order by
+left join
+right join
+full outer join
