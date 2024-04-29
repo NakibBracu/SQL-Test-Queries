@@ -51,3 +51,57 @@ select eb.Bonusamount from employee2 e inner join Employeebonus eb on
 e.EmployeeId = eb.Employeeid 
 where Name = 'sazzu'
 )
+
+--Now find out the total salary of all department
+select sum(salary) from employee2
+-- Find out how many records are available in a table
+select count(*) as TotalRecords from employee2
+select count(1) as TotalRecords from employee2
+-- Find out the average salary of the company
+select avg(salary) from employee2
+-- Now add department to employee2
+select * from employee2
+--adding a new column in employee2
+alter table employee2
+add DepartmentId int null
+-- update multiple row
+update employee2
+set departmentid = 2
+where EmployeeId in (3,4)
+-- update single row
+update employee2
+set departmentid = 3
+where EmployeeId = 5
+-- Create table Department and add info there
+create table Department
+(
+ID int primary key identity,
+Name varchar(200)
+)
+
+-- Now insert values in department
+insert into Department
+select 'HR'
+union
+select 'DEV'
+union
+select 'QA'
+union
+select 'BA'
+
+select * from Department
+
+--Now find out the total employees
+select * from employee2 e inner join
+Department d on e.DepartmentId = d.ID 
+-- As some of the employees don't hold any department
+-- we have to use right join
+select d.ID,d.Name,count(e.departmentid) as TotalEmployees from employee2 e
+right join Department d
+on e.DepartmentId = d.ID
+group by d.Name,e.departmentid,d.ID 
+--Now find out the department which has more than one employee
+select d.ID,d.Name,count(e.departmentid) as TotalEmployees from employee2 e
+right join Department d on e.departmentid = d.ID
+group by d.Name,d.ID
+having count(e.departmentid) > 1 
