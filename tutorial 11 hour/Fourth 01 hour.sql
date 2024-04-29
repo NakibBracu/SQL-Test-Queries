@@ -31,3 +31,23 @@ union
 select * from employee3 where EmployeeId not in (
 select EmployeeId from employee2
 )) t
+
+--Now find the employees whose bonus is greater than the particular Employee 'Nakib'
+select e.EmployeeId,e.Name,eb.Bonusamount from employee2 e inner join 
+Employeebonus eb
+on e.EmployeeId = eb.Employeeid
+where eb.Bonusamount > (
+select eb.Bonusamount from employee2 e inner join
+Employeebonus eb
+on e.EmployeeId = eb.Employeeid
+where Name = 'Nakib'
+)
+-- Now find out the employees where their bonus is less than sazzu
+select e.EmployeeId,e.Name,eb.Bonusamount from employee2 e inner join 
+Employeebonus eb
+on e.EmployeeId = eb.Employeeid
+where eb.Bonusamount < (
+select eb.Bonusamount from employee2 e inner join Employeebonus eb on
+e.EmployeeId = eb.Employeeid 
+where Name = 'sazzu'
+)
