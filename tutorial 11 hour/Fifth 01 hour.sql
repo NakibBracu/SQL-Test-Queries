@@ -54,3 +54,64 @@ from employee2
 --But what if we want to just create the table not the data to be copied
 select * into EmployeeHistory1 from employee2 where 1 = 2 -- Here where condition 
 -- should be falsed to avoid data copying
+
+select * from EmployeeHistory1
+
+--Now we like to add  column with default value
+alter table EmployeeHistory1
+add Lastname varchar(20) default('NA')
+
+insert into EmployeeHistory1 (Name,Salary,Gender,DepartmentId)
+values ('Paresh',100000,'Male',3) --As we don't insert any values for LastName it will
+-- set to default 
+
+-- Now we have to add dynamically calculated value
+alter table EmployeeHistory1 
+add EmployeeCode as 'NPS'+cast(employeeid as nvarchar(20))+'_DPG'
+
+alter table EmployeeHistory1 -- dropping a column if something wrong
+drop column EmployeeCode 
+
+insert into EmployeeHistory1 (Name,Salary,Gender,DepartmentId)
+values ('Zayed',50000,'Male',2)
+
+
+-- Advance Update. Update the employees salary with their bonuses added to them
+select e.EmployeeId,e.Name,e.Salary,eb.Bonusamount,(e.Salary+eb.Bonusamount) as New_salary
+from employee2 e inner join 
+Employeebonus eb on e.EmployeeId = eb.Employeeid
+
+-- Here we are updating the salary performing inner join
+update e
+set e.Salary = e.Salary + eb.Bonusamount
+from employee2 e
+inner join Employeebonus eb
+on e.EmployeeId = eb.Employeeid
+
+select * from employee2
+
+select * from employee3
+
+alter table employee3
+add DepartmentId int null
+
+
+-- Now Make employee2 and employee3 records same doing merge
+-- In real Life scenario lets say we have same columns table operations might need to get
+-- updated from one table to another
+select * from employee2
+
+merge employee3 as Target
+using employee2 as Source
+on Target.EmployeeID = Source.EmployeeID
+when matched then update set 
+Target.Name = Source.Name,
+Target.Salary = Source.Salary,
+Target.Gender = Source.Gender,
+Target.DepartmentId = Source.DepartmentId
+when not matched then insert (Name,Salary,Gender,DepartmentId)
+values(Source.Name,Source.Salary,Source.Gender,Source.DepartmentId)
+when not matched by Source then delete;
+
+select * from employee2
+select * from employee3
