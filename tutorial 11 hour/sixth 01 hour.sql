@@ -1,0 +1,73 @@
+select * into employee4 from employee3
+
+select * from employee4
+
+select * from Employeebonus
+ -- Now keep only the employee in employee4 table where emplyeeid reference existed 
+ -- in the employeeBonus  Table
+
+delete from employee4 where EmployeeId not in  (
+select EmployeeId from Employeebonus
+) 
+
+select * from employee4
+
+--Now what if I want to override Identity Column and insert values on it 
+-- Let's just insert some duplicate rows to find out
+-- Allow explicit insertion of identity values
+SET IDENTITY_INSERT employee4 ON;
+
+-- Insert duplicate records
+INSERT INTO employee4 (EmployeeId, name, salary, gender, departmentid) VALUES 
+(1,'Nakib',101000,'Male',1),
+(1,'Nakib',101000,'Male',1),
+(3,'Sarmila',178000,'Female',2),
+(3,'Sarmila',178000,'Female',2);
+
+-- Disallow explicit insertion of identity values
+SET IDENTITY_INSERT employee4 OFF;
+
+select * from employee4
+
+--Now we have to delete the duplicate records
+--here we learn the concept of CTE and Row number
+-- Now Row Number Partiton The records by EmployeeId and with that RN > 1 will be considered
+-- as duplicate records
+with duplicaterecords as
+(
+select *,ROW_NUMBER() over(partition by EmployeeId order by Salary desc) as RN
+from employee4
+)
+delete from duplicaterecords where RN > 1
+
+select * from employee4
+
+-- How to insert apostrophe in a string in sql server?
+-- using double quotation
+select 'The bag was in Nakib''s house'
+
+-- Now revise replace , Replicate, translate,len,substring
+select Replace('Nakib1234','1234','')
+select Replicate('#',26)
+select Translate('Nakib1234','1234567890',Replicate('#',10)) --Important function
+--Write while loop in sql
+declare @i int = 1
+while (@i<10)
+begin
+select @i
+set @i = @i+1
+end
+
+-- But the above while loop only prints the number is seperate tables for each iteration
+-- But we need to be part of a same table 
+-- We can accomplish that only with recursive CTE
+
+with whileLoop(cntr) as 
+(
+select 1 
+union all 
+select cntr+1 
+from whileLoop
+where cntr < 10
+)
+select * from whileloop 
