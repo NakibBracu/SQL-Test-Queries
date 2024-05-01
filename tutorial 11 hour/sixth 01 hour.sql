@@ -101,3 +101,32 @@ WITH charPrintOnebyOne(counter, Name, charName) AS
     WHERE counter < LEN(Name)
 )
 SELECT * FROM charPrintOnebyOne;
+
+select 'scissors' 
+
+--Find out from the word scissors that how many times 's' is repeated
+select (LEN('scissors')-LEN(Replace('scissors','s','')))
+select (LEN('scissors')-LEN(Replace('scissors','ss','')))/len('ss')
+
+--Now let's Generalize This
+declare @WordToDivide nvarchar(max) = 'scissors'
+declare @character nvarchar(max) = 'ss'
+select (LEN(@WordToDivide)-LEN(REPLACE(@WordToDivide,@character,'')))/LEN(@character)
+
+--Now You have a unwanted mixutre data of Name and Salary collectively 
+--select Translate('Nakib123456','1234567890',REPLICATE('',10)) -- This is wrong
+--The second and third arguments of the TRANSLATE 
+--built-in function must contain an equal number of characters.
+
+select Replace(Translate('Nakib123456','1234567890',REPLICATE('#',10)),'#','') as Name
+select 
+Replace(Translate('Nakib123456','abcdefghijklmnopqrstuvwxyz',REPLICATE('#',26)),'#','') 
+as salary
+
+--Now Generalize it
+declare @MixedInput nvarchar(max)= 'Nakib123456'
+-- Extract salary and Name from it
+select replace(TRANSLATE(@MixedInput,'1234567890',REPLICATE('#',10)),'#','') as Name
+select 
+replace(TRANSLATE(@MixedInput,'abcdefghijklmnopqrstuvwxyz',replicate('#',26)),'#','')
+as Salary
