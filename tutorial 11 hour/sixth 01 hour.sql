@@ -71,3 +71,33 @@ from whileLoop
 where cntr < 10
 )
 select * from whileloop 
+
+-- Now let's say print each character of 'Nakib' in every row like below
+-- N
+-- a
+-- k
+-- i
+-- b
+
+with CharcterPrint(cntr,Name,charName) as
+(
+select 1, cast('Nakib' as varchar(10)),CAST(SUBSTRING('Nakib',1,1) as varchar(10))
+union all
+select cntr+1,CAST(Name as varchar(10)),CAST(SUBSTRING('Nakib',cntr+1,1) as varchar(10))
+from CharcterPrint
+where cntr < len(Name)
+)
+select * from CharcterPrint
+
+
+DECLARE @Word VARCHAR(MAX) = 'pneumonoultramicroscopicsilicovolcanoconiosis';
+
+WITH charPrintOnebyOne(counter, Name, charName) AS
+(
+    SELECT 1, CAST(@Word AS VARCHAR(MAX)), CAST(SUBSTRING(@Word, 1, 1) AS VARCHAR(MAX))
+    UNION ALL
+    SELECT counter + 1, CAST(@Word AS VARCHAR(MAX)), CAST(SUBSTRING(@Word, counter + 1, 1) AS VARCHAR(MAX))
+    FROM charPrintOnebyOne
+    WHERE counter < LEN(Name)
+)
+SELECT * FROM charPrintOnebyOne;
