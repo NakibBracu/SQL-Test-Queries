@@ -63,3 +63,81 @@ SUBSTRING(Name,1,1)+'.'+
 SUBSTRING(Name,CHARINDEX(' ',Name)+1,1)
 as Initial
 from #Test3
+
+-- select string_split('Nakib,Rakib,Kabila,Nabik',',') from #Test3
+-- This might not work all the time
+-- So, we have to create a custom function to do the work
+-- Let's create a simple function first
+-- below function is a scalar function, because it returns a scalar value
+create function printMessage(@message nvarchar(max))
+returns nvarchar(max)
+begin
+    return @message;
+end
+drop function printMessage
+DECLARE @outputMessage nvarchar(max);
+
+SET @outputMessage = dbo.printMessage('Your message goes here.');
+
+SELECT @outputMessage AS OutputMessage;
+
+-- Let's say revise the cte first
+with cte(name,i) as
+(
+  select 'Nakib', 1 Name
+  union all
+  select Name,i+1 from cte
+  where i<5
+)
+select * from cte
+
+--Below Function is tabular function, because it returns a table
+alter function splitstring(@str varchar(max))
+returns Table
+return
+(
+ with CTE (strr,item,remainingSTR) as
+ (
+ select cast(@str+',' as varchar(max)),
+ cast(substring(@str+',',1,charindex(',',@str+',')-1) as varchar(max)),
+ cast(substring(@str+',',charindex(',',@str+',')+1,len(@str+',')) as varchar(max))
+ union all
+ select cast(@str as varchar(max)),
+ cast(substring(remainingSTR,1,charindex(',',remainingSTR)-1) as varchar(max)),
+ cast(substring(remainingSTR,charindex(',',remainingSTR)+1,len(remainingSTR)) as 
+ varchar(max))
+ from CTE
+ where CHARINDEX(',',remainingSTR)>1
+ )
+
+ select * from CTE
+
+)
+
+
+select * from splitstring('Nakib,Rakib,Akib,Nabik')
+
+create function splitstring2(@str varchar(max))
+returns Table
+return
+(
+ with CTE (strr,item,remainingSTR) as
+ (
+ select cast(@str+',' as varchar(max)),
+ cast(substring(@str+',',1,charindex(',',@str+',')-1) as varchar(max)),
+ cast(substring(@str+',',charindex(',',@str+',')+1,len(@str+',')) as varchar(max))
+ union all
+ select cast(@str as varchar(max)),
+ cast(substring(remainingSTR,1,charindex(',',remainingSTR)-1) as varchar(max)),
+ cast(substring(remainingSTR,charindex(',',remainingSTR)+1,len(remainingSTR)) as 
+ varchar(max))
+ from CTE
+ where CHARINDEX(',',remainingSTR)>1
+ )
+
+ select item from CTE
+
+)
+
+select * from splitstring2('Nakib,Rakib,Akib,Nabik')
+
