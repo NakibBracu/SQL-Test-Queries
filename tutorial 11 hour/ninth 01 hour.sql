@@ -93,4 +93,19 @@ FROM daycte
 WHERE dw NOT IN ('Friday', 'Saturday')
 OPTION (MAXRECURSION 400);
 
+--now let's say you have only given a year string you have to find out the total working days
+-- of that year
+DECLARE @year NVARCHAR(10) = '2023';
+DECLARE @StartDate1 NVARCHAR(10) = @year + '-01-01';
 
+;WITH GivenYearWorkingDays(StartDate, DW) AS (
+    SELECT CAST(@StartDate1 AS DATETIME) AS StartDate, DATENAME(DW, CAST(@StartDate1 AS DATETIME)) AS DW
+    UNION ALL
+    SELECT DATEADD(day, 1, StartDate), DATENAME(DW, DATEADD(day, 1, StartDate))
+    FROM GivenYearWorkingDays
+    WHERE StartDate < DATEADD(year, 1, CAST(@StartDate1 AS DATETIME))
+)
+SELECT count(1) as totalworkingDays
+FROM GivenYearWorkingDays
+WHERE DW NOT IN ('Friday', 'Saturday')
+OPTION (MAXRECURSION 400);
