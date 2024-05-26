@@ -99,3 +99,16 @@ VALUES
 	) t
 	group by ProductName
 	) tt
+
+	--Now implement the same thing with the help of pivot
+	select * from
+	(select
+	p.ProductName,
+	(p.Price*tb.QTY) as totalPrice
+	from product p
+	inner join TableOrder tb
+	on p.productID = tb.ProductID) t --here this t table will be used to make pivot
+	pivot(
+	sum(totalPrice)
+	for ProductName in([MI],[APPLE],[Samsung])
+	)pv
