@@ -74,11 +74,23 @@ select i-1
 from cte2
 where i>1 --Here < means =
 )
-select * from cte2
+select * from cte2;
 
 
 -- Now let's say we have two inputs StartDate and EndDate
 -- We have to find out the total working days
-Declare @StartDate dateTime = '2024-01-01' , @EndDate dateTime = '2024-07-25'
+DECLARE @StartDate DATETIME = '2024-01-01', @EndDate DATETIME = '2024-08-31';
 
-select DATENAME(dw,@StartDate)
+WITH daycte(StartDate, dw, EndDate) AS (
+    SELECT @StartDate, DATENAME(dw, @StartDate), @EndDate
+    UNION ALL
+    SELECT DATEADD(day, 1, StartDate), DATENAME(dw, DATEADD(day, 1, StartDate)), EndDate
+    FROM daycte
+    WHERE StartDate < EndDate
+)
+SELECT count(1) as WorkingDays 
+FROM daycte
+WHERE dw NOT IN ('Friday', 'Saturday')
+OPTION (MAXRECURSION 400);
+
+
