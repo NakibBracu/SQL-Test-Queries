@@ -109,3 +109,31 @@ SELECT count(1) as totalworkingDays
 FROM GivenYearWorkingDays
 WHERE DW NOT IN ('Friday', 'Saturday')
 OPTION (MAXRECURSION 400);
+
+
+--Now lets create this as a scalar value function
+--If we don't enclose our function between Go -- GO
+-- Then in the middle of the queryBatch 
+-- we can't create function
+GO
+create or alter function GetBusinessDaysCount (@Year varchar(10))
+returns int --This function will return and integer; It's a scalar value function
+begin
+declare @Count int;
+Declare @StartDate2 varchar(100) = @Year+'-01-01'
+;with workdays(startDate2,dw) as
+(
+select CAST(@StartDate2 as datetime) as startDate2,DATENAME(dw,CAST(@StartDate2 as datetime))
+union all
+select DATEADD(DAY,1,startDate2),DATENAME(dw,DATEADD(DAY,1,startDate2))
+from workdays
+where startDate2 < DATEADD(YEAR,1,CAST(@StartDate2 AS DATETIME))
+)
+select @Count = count(*) from workdays
+where dw not in ('Friday','Saturday')
+option (maxrecursion 400);--because after 100 loops it will stop
+return @Count
+end
+GO
+
+SELECT dbo.GetBusinessDaysCount('2025') AS BusinessDaysCount;
