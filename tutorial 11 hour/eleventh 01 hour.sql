@@ -224,3 +224,101 @@ SET @AllEmployees3 =
 </root>
 ';
 exec insertMultipleEmployees @AllEmployees3
+
+go
+create or alter procedure insertMultipleEmployees2
+@AllEmployees nvarchar(max)=null
+as
+begin
+declare @handlr int
+exec SP_Xml_PrepareDocument @handlr output, @AllEmployees
+insert into Employee(EmployeeName,Gender,Salary,Comission,DepartmentId,MaritalStatus)
+select
+Name,
+Gender,
+Salary,
+Comission,
+DepartmentId,
+MaritalStatus from 
+openxml(@handlr,'/root/Employee',2) with
+(
+Name varchar(100) 'EmployeeName',
+Gender varchar(100) 'Gender',
+Salary int 'Salary',
+Comission int 'Comission',
+DepartmentId int 'DepartmentId',
+MaritalStatus varchar(100) 'MaritalStatus'
+)
+end
+go
+
+delete from Employee where employeeId in (18,19,20)
+select * from Employee
+DECLARE @AllEmployees4 NVARCHAR(MAX);
+
+SET @AllEmployees4 = 
+'
+<root>
+  <Employee>
+    <EmployeeName>
+      Rahman Khan
+    </EmployeeName>
+    <Salary>
+      80000
+    </Salary>
+    <Gender>
+      Male
+    </Gender>
+    <Comission>
+      600
+    </Comission>
+    <DepartmentId>
+      1
+    </DepartmentId>
+    <MaritalStatus>
+      Married
+    </MaritalStatus>
+  </Employee>
+  <Employee>
+    <EmployeeName>
+      Fatima Begum
+    </EmployeeName>
+    <Salary>
+      55000
+    </Salary>
+    <Gender>
+      Female
+    </Gender>
+    <Comission>
+      300
+    </Comission>
+    <DepartmentId>
+      2
+    </DepartmentId>
+    <MaritalStatus>
+      Single
+    </MaritalStatus>
+  </Employee>
+  <Employee>
+    <EmployeeName>
+      Aminul Islam
+    </EmployeeName>
+    <Salary>
+      70000
+    </Salary>
+    <Gender>
+      Male
+    </Gender>
+    <Comission>
+      450
+    </Comission>
+    <DepartmentId>
+      3
+    </DepartmentId>
+    <MaritalStatus>
+      Married
+    </MaritalStatus>
+  </Employee>
+</root>
+';
+exec insertMultipleEmployees2 @AllEmployees4
