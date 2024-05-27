@@ -322,3 +322,29 @@ SET @AllEmployees4 =
 </root>
 ';
 exec insertMultipleEmployees2 @AllEmployees4
+
+--Now we learn pagination with the help of offset and fetch next
+-- Left ---> Offset
+-- Take --> fetch next
+declare @pageSize int = 3,
+ @pageNumber int = 3
+select * from Employee
+order by employeeId
+offset (@pageNumber - 1)*@pageSize rows
+fetch next @pageSize rows only
+
+--Now let's create a store procedure with this
+go
+create or alter procedure paginationWithPageNumberPagesize
+ @pageNumber int,
+@pageSize int
+as
+begin
+select * from Employee
+order by employeeId
+offset (@pageNumber - 1)*@pageSize rows
+fetch next @pageSize rows only
+end
+go
+
+exec paginationWithPageNumberPagesize 3,5
