@@ -75,3 +75,99 @@ go
 select * from employee
 exec insertEmployee @EmployeeName = 'Sajeda', @Salary = 25000, @Gender = 'female',
 @Comission = 5000, @DepartmentId = 3,  @MaritalStatus = 'single'
+
+
+--This will return all the columns of a specific table
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    CHARACTER_MAXIMUM_LENGTH, 
+    IS_NULLABLE, 
+    COLUMN_DEFAULT
+FROM 
+    INFORMATION_SCHEMA.COLUMNS
+WHERE 
+    TABLE_NAME = 'Employee';
+
+declare @AllEmployees nvarchar(max)
+select @AllEmployees =
+'
+<root>
+<Employee>
+<EmployeeName>
+Azad Ali
+</EmployeeName>
+<Salary>
+75000
+</Salary>
+<Gender>
+Male
+</Gender>
+<Comission>
+500
+</Comission>
+<DepartmentId>
+3
+</DepartmentId>
+<MaritalStatus>
+Single
+</MaritalStatus>
+<EmployeeName> 
+Naveda
+</EmployeeName>
+<Salary>
+50000
+</Salary>
+<Gender>
+Female
+</Gender>
+<Comission>
+250
+</Comission>
+<DepartmentId>
+4
+</DepartmentId>
+<MaritalStatus>
+Married
+</MaritalStatus>
+</Employee>
+</root>
+'
+
+DECLARE @AllEmployees2 NVARCHAR(MAX);
+
+SET @AllEmployees2 = 
+'
+<root>
+  <Employee 
+    EmployeeName="Azad Ali" 
+    Salary="75000" 
+    Gender="Male" 
+    Comission="500" 
+    DepartmentId="3" 
+    MaritalStatus="Single" 
+  />
+  <Employee 
+    EmployeeName="Naveda" 
+    Salary="50000" 
+    Gender="Female" 
+    Comission="250" 
+    DepartmentId="4" 
+    MaritalStatus="Married" 
+  />
+</root>
+';
+
+declare @handlr int
+exec SP_xml_PrepareDocument @handlr output, @AllEmployees2
+select @handlr
+
+select * from openxml(@handlr,'/root/Employee',1) with
+(
+Name varchar(100) '@EmployeeName',
+Gender varchar(100) '@Gender',
+Salary int '@Salary',
+Comission int '@Comission',
+DepartmentId int '@DepartmentId',
+MaritalStatus varchar(100) '@MaritalStatus'
+)
