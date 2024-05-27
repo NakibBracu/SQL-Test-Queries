@@ -56,3 +56,22 @@ DECLARE @emppName VARCHAR(MAX);
 EXEC GetEmployeeNames @DeptID = 2, @Salary = 50000, @EmpName = @emppName OUTPUT;
 
 SELECT @emppName;
+
+go
+create or alter procedure insertEmployee
+@EmployeeName varchar(max),
+@Salary int = null,
+@Gender varchar(max) = null,
+@Comission int = null,
+@DepartmentId int = null,
+@MaritalStatus  varchar(max) = null
+as
+begin
+insert into Employee (EmployeeName,Salary,Gender,Comission,DepartmentId,MaritalStatus)
+values(@EmployeeName,@Salary,@Gender,@Comission,@DepartmentId,@MaritalStatus)
+end
+go
+
+select * from employee
+exec insertEmployee @EmployeeName = 'Sajeda', @Salary = 25000, @Gender = 'female',
+@Comission = 5000, @DepartmentId = 3,  @MaritalStatus = 'single'
