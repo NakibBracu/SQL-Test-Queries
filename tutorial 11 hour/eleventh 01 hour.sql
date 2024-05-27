@@ -171,3 +171,56 @@ Comission int '@Comission',
 DepartmentId int '@DepartmentId',
 MaritalStatus varchar(100) '@MaritalStatus'
 )
+
+go
+create or alter procedure insertMultipleEmployees
+@AllEmployees nvarchar(max)=null
+as
+begin
+declare @handlr int
+exec SP_Xml_PrepareDocument @handlr output, @AllEmployees
+insert into Employee(EmployeeName,Gender,Salary,Comission,DepartmentId,MaritalStatus)
+select
+Name,
+Gender,
+Salary,
+Comission,
+DepartmentId,
+MaritalStatus from 
+openxml(@handlr,'/root/Employee',1) with
+(
+Name varchar(100) '@EmployeeName',
+Gender varchar(100) '@Gender',
+Salary int '@Salary',
+Comission int '@Comission',
+DepartmentId int '@DepartmentId',
+MaritalStatus varchar(100) '@MaritalStatus'
+)
+end
+go
+
+select * from Employee
+DECLARE @AllEmployees3 NVARCHAR(MAX);
+
+SET @AllEmployees3 = 
+'
+<root>
+  <Employee 
+    EmployeeName="Azad Ali" 
+    Salary="75000" 
+    Gender="Male" 
+    Comission="500" 
+    DepartmentId="3" 
+    MaritalStatus="Single" 
+  />
+  <Employee 
+    EmployeeName="Naveda" 
+    Salary="50000" 
+    Gender="Female" 
+    Comission="250" 
+    DepartmentId="4" 
+    MaritalStatus="Married" 
+  />
+</root>
+';
+exec insertMultipleEmployees @AllEmployees3
